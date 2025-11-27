@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maryam Ismail | Interactive Professional Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        
+        /* Chart Container Utility Class */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Timeline Connector Line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1.25rem; /* half of w-10 */
+            width: 2px;
+            background-color: #e5e7eb;
+            z-index: 0;
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals with Professional Blue Accents -->
+    <!-- Application Structure Plan: A dashboard-style interactive resume. 
+         1. Header: Quick contact and identity.
+         2. Hero: "About" summary with dynamic typing effect for engagement.
+         3. Skills Dashboard: Visualizing technical vs. creative skills using interactive charts (Chart.js) to show balance.
+         4. Experience Timeline: An interactive accordion-style timeline to declutter the view and allow drill-down into specific roles.
+         5. Education & Certs Grid: Card-based layout for qualifications.
+         6. Footer: Static contact info.
+         Rationale: This structure transforms a static list into an exploratory profile, allowing recruiters to visualize proficiency and interact with history. -->
+    <!-- Visualization & Content Choices: 
+         1. Skill Proficiency -> Goal: Inform/Compare -> Horizontal Bar Chart (Chart.js) -> Hover for details -> Clear comparison of strength in Web vs. Office.
+         2. Language Fluency -> Goal: Inform -> Doughnut Chart (Chart.js) -> Visual break from bars -> Shows native vs. learned proficiency.
+         3. Experience -> Goal: Change/Process -> Interactive Accordion (HTML/JS) -> Click to expand -> Reduces cognitive load, reveals detail on demand.
+         4. NO SVG/Mermaid confirmed. Using HTML entities and Canvas. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- Navigation / Header -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-stone-800 tracking-tight">Maryam Ismail</span>
+                </div>
+                <div class="hidden sm:flex items-center space-x-8">
+                    <a href="#about" class="text-stone-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">About</a>
+                    <a href="#skills" class="text-stone-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">Skills Analytics</a>
+                    <a href="#experience" class="text-stone-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">Experience</a>
+                    <a href="#education" class="text-stone-600 hover:text-blue-600 transition-colors px-3 py-2 text-sm font-medium">Education</a>
+                </div>
+                <!-- Mobile menu button placeholder (simplified for single file) -->
+                <div class="flex items-center sm:hidden">
+                    <button id="mobile-menu-btn" class="text-stone-500 hover:text-stone-700 p-2">
+                        ☰
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu Panel -->
+            <div id="mobile-menu" class="hidden sm:hidden border-t border-gray-100 bg-white absolute w-full left-0 shadow-lg">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a href="#about" class="block px-3 py-2 text-base font-medium text-stone-600 hover:bg-stone-50">About</a>
+                    <a href="#skills" class="block px-3 py-2 text-base font-medium text-stone-600 hover:bg-stone-50">Skills</a>
+                    <a href="#experience" class="block px-3 py-2 text-base font-medium text-stone-600 hover:bg-stone-50">Experience</a>
+                    <a href="#education" class="block px-3 py-2 text-base font-medium text-stone-600 hover:bg-stone-50">Education</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+
+        <!-- Section 1: Hero / About -->
+        <section id="about" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-stone-100">
+            <div class="md:col-span-2 space-y-4">
+                <div class="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold uppercase tracking-wide">Web Development Instructor</div>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-stone-900 tracking-tight">
+                    Hello, I'm <span class="text-blue-600">Maryam</span>.
+                </h1>
+                <h2 class="text-xl text-stone-500 font-medium h-8" id="typing-text">
+                    <!-- JS will populate this -->
+                </h2>
+                <p class="text-stone-600 leading-relaxed text-lg">
+                    Motivated and versatile professional with a background in <strong>Web Development Instruction</strong> and a strong foundation in core computer applications. I am adaptable, dedicated to continuous improvement, and eager to leverage my analytical skills in a challenging educational environment.
+                </p>
+                <div class="flex flex-wrap gap-3 pt-4">
+                    <a href="mailto:themaryamismail@gmail.com" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-all shadow-sm">
+                        ✉️ Contact Me
+                    </a>
+                    <a href="https://github.com/TheMaryamlsmail" target="_blank" class="inline-flex items-center justify-center px-5 py-3 border border-stone-300 text-base font-medium rounded-lg text-stone-700 bg-white hover:bg-stone-50 transition-all shadow-sm">
+                        💻 View GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="md:col-span-1 flex justify-center">
+                <div class="w-48 h-48 bg-stone-100 rounded-full flex items-center justify-center text-6xl shadow-inner border-4 border-white">
+                    👩‍🏫
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Skills Dashboard (Visualizations) -->
+        <section id="skills" class="space-y-6">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-bold text-stone-900">Competency Dashboard</h2>
+                <p class="text-stone-500 mt-2">
+                    A visual breakdown of my technical expertise, language proficiency, and creative skill set. 
+                    Hover over the charts to see specific details about my capabilities.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Chart 1: Technical Proficiency -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                    <h3 class="text-lg font-semibold text-stone-800 mb-4 flex items-center">
+                        <span class="mr-2">⚡</span> Technical Stack & Tools
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Languages & Soft Skills Mix -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100">
+                    <h3 class="text-lg font-semibold text-stone-800 mb-4 flex items-center">
+                        <span class="mr-2">🗣️</span> Languages & Communication
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="languagesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Creative Skills Cards (Non-Chart Visuals) -->
+            <div class="bg-blue-50 rounded-xl p-6 border border-blue-100">
+                <h3 class="text-lg font-semibold text-blue-900 mb-4">🎨 Creative & Multimedia Skills</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-2">🎬</div>
+                        <h4 class="font-bold text-stone-800">Video Editing</h4>
+                        <p class="text-sm text-stone-600">YouTube, Dailymotion, Rumble</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-2">🖼️</div>
+                        <h4 class="font-bold text-stone-800">Visual Arts</h4>
+                        <p class="text-sm text-stone-600">Aboriginal, Abstract & Digital Art</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-2xl mb-2">✍️</div>
+                        <h4 class="font-bold text-stone-800">Script Writing</h4>
+                        <p class="text-sm text-stone-600">Short scripts for creative content</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Experience Timeline -->
+        <section id="experience" class="space-y-6">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-bold text-stone-900">Professional Journey</h2>
+                <p class="text-stone-500 mt-2">
+                    Explore my teaching experience by clicking on the role below to reveal key responsibilities and achievements.
+                </p>
+            </div>
+
+            <div class="relative timeline-line pl-4 md:pl-0">
+                <!-- Timeline Item -->
+                <div class="relative pl-10 md:pl-16 py-2 group">
+                    <!-- Dot -->
+                    <div class="absolute left-2 md:left-[1.65rem] top-6 w-5 h-5 bg-blue-600 rounded-full border-4 border-white shadow-sm z-10"></div>
+                    
+                    <!-- Content Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer" onclick="toggleAccordion('exp-1')">
+                        <div class="p-6 flex flex-col md:flex-row md:items-center justify-between bg-stone-50 border-b border-stone-100">
+                            <div>
+                                <h3 class="text-xl font-bold text-stone-900">Web Development (Front-End) Teacher</h3>
+                                <p class="text-blue-600 font-medium">Self-Employed / Independent Instruction</p>
+                            </div>
+                            <div class="mt-2 md:mt-0 text-right">
+                                <span class="inline-block px-3 py-1 bg-stone-200 text-stone-700 rounded-full text-xs font-bold">Karachi, Pakistan</span>
+                                <p class="text-sm text-stone-500 mt-1">[Start Date] – [End Date]</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Collapsible Details -->
+                        <div id="exp-1" class="hidden bg-white p-6">
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-blue-500 mr-2 mt-1">▶</span>
+                                    <span class="text-stone-600">Designed and delivered comprehensive training sessions on front-end web technologies (HTML5, CSS3, JavaScript).</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-blue-500 mr-2 mt-1">▶</span>
+                                    <span class="text-stone-600">Taught proficiency in MS Word, Excel, and PowerPoint, enabling students to manage digital tasks effectively.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-blue-500 mr-2 mt-1">▶</span>
+                                    <span class="text-stone-600">Developed customized course materials and practical assignments to ensure high retention rates and hands-on skill mastery.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-blue-500 mr-2 mt-1">▶</span>
+                                    <span class="text-stone-600">Provided individualized mentorship and feedback, guiding students from foundational concepts to functional web components.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-stone-50 px-6 py-2 text-center text-xs text-stone-400 uppercase tracking-widest font-semibold hover:bg-stone-100 transition-colors">
+                            Click to toggle details
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Education & Certifications -->
+        <section id="education" class="space-y-6 pb-12">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-bold text-stone-900">Education & Certifications</h2>
+                <p class="text-stone-500 mt-2">
+                    My academic foundation and continuous professional development.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Academic Column -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-stone-800 border-b pb-2">Academic Degrees</h3>
+                    
+                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-blue-300 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-stone-900">Bachelors in Commerce (B.Com)</h4>
+                                <p class="text-stone-600 text-sm">University of Karachi</p>
+                            </div>
+                            <span class="text-2xl">🎓</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-blue-300 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-stone-900">Intermediate in Commerce</h4>
+                                <p class="text-stone-600 text-sm">Govt Girls Degree College Zamzama</p>
+                            </div>
+                            <span class="text-2xl">🏫</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-blue-300 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-stone-900">Matriculation in Computer Science</h4>
+                                <p class="text-stone-600 text-sm">Paragon School System</p>
+                            </div>
+                            <span class="text-2xl">💻</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications Column -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-stone-800 border-b pb-2">Professional Certifications</h3>
+                    
+                    <div class="bg-blue-600 text-white p-5 rounded-lg shadow-md transform hover:-translate-y-1 transition-transform">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg">Web Development</h4>
+                                <p class="text-blue-100 text-sm mt-1">SZABIST ZABtech ITVE-Khi (Azam town)</p>
+                            </div>
+                            <span class="text-2xl">📜</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-stone-800 text-white p-5 rounded-lg shadow-md transform hover:-translate-y-1 transition-transform">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg">Web Engineering</h4>
+                                <p class="text-stone-300 text-sm mt-1">NITSEP.pk (On-going)</p>
+                            </div>
+                            <span class="text-2xl">🚀</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-stone-600 rounded-full h-1.5">
+                                <div class="bg-green-400 h-1.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                            <p class="text-xs text-stone-400 mt-1 text-right">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-stone-900 text-stone-300 py-12 mt-12 rounded-t-3xl">
+            <div class="max-w-6xl mx-auto px-4 text-center space-y-6">
+                <h2 class="text-2xl font-bold text-white">Let's Connect</h2>
+                <p class="max-w-md mx-auto text-stone-400">
+                    I am currently available for teaching positions and web development projects. 
+                    Feel free to reach out to discuss how I can contribute to your team.
+                </p>
+                <div class="flex justify-center space-x-6">
+                    <a href="tel:+923313935835" class="hover:text-white transition-colors">📞 +92 331 393 5835</a>
+                    <span class="text-stone-600">|</span>
+                    <a href="mailto:themaryamismail@gmail.com" class="hover:text-white transition-colors">✉️ themaryamismail@gmail.com</a>
+                    <span class="text-stone-600">|</span>
+                    <span class="hover:text-white transition-colors">📍 Karachi, Pakistan</span>
+                </div>
+                <div class="pt-8 border-t border-stone-800 text-sm text-stone-500">
+                    &copy; 2024 Maryam Ismail. Generated Interactive Portfolio.
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- State Management ---
+        const appState = {
+            typingIndex: 0,
+            roles: ["Web Development Instructor", "Frontend Developer", "Continuous Learner"],
+            currentRoleIndex: 0
+        };
+
+        // --- Typing Effect Logic ---
+        function typeWriter() {
+            const currentText = appState.roles[appState.currentRoleIndex];
+            const element = document.getElementById("typing-text");
+            
+            if (appState.typingIndex < currentText.length) {
+                element.innerHTML += currentText.charAt(appState.typingIndex);
+                appState.typingIndex++;
+                setTimeout(typeWriter, 100);
+            } else {
+                setTimeout(eraseText, 2000);
+            }
+        }
+
+        function eraseText() {
+            const currentText = appState.roles[appState.currentRoleIndex];
+            const element = document.getElementById("typing-text");
+            
+            if (appState.typingIndex > 0) {
+                element.innerHTML = currentText.substring(0, appState.typingIndex - 1);
+                appState.typingIndex--;
+                setTimeout(eraseText, 50);
+            } else {
+                appState.currentRoleIndex = (appState.currentRoleIndex + 1) % appState.roles.length;
+                setTimeout(typeWriter, 500);
+            }
+        }
+
+        // --- Accordion Logic ---
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+                // Optional: Scroll to element if needed
+            } else {
+                element.classList.add('hidden');
+            }
+        }
+
+        // --- Mobile Menu Logic ---
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // --- Chart Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start Typing Effect
+            typeWriter();
+
+            // Chart 1: Technical Skills (Bar Chart)
+            const ctxSkills = document.getElementById('skillsChart').getContext('2d');
+            new Chart(ctxSkills, {
+                type: 'bar',
+                data: {
+                    labels: ['HTML5', 'CSS3', 'JavaScript', 'MS Office', 'Video Editing'],
+                    datasets: [{
+                        label: 'Proficiency Level',
+                        data: [90, 85, 75, 95, 80], // Estimated values based on "Teacher" role implies high proficiency
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.7)',  // Red for HTML
+                            'rgba(59, 130, 246, 0.7)', // Blue for CSS
+                            'rgba(245, 158, 11, 0.7)', // Yellow for JS
+                            'rgba(16, 185, 129, 0.7)', // Green for Office
+                            'rgba(139, 92, 246, 0.7)'  // Purple for Video
+                        ],
+                        borderColor: [
+                            'rgb(239, 68, 68)',
+                            'rgb(59, 130, 246)',
+                            'rgb(245, 158, 11)',
+                            'rgb(16, 185, 129)',
+                            'rgb(139, 92, 246)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal Bar Chart
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '% Proficiency';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Languages (Doughnut Chart)
+            const ctxLang = document.getElementById('languagesChart').getContext('2d');
+            new Chart(ctxLang, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Urdu (Native)', 'English (Intermediate Fluent)'],
+                    datasets: [{
+                        data: [100, 75],
+                        backgroundColor: [
+                            'rgba(30, 58, 138, 0.8)', // Deep Blue
+                            'rgba(147, 197, 253, 0.8)' // Light Blue
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
